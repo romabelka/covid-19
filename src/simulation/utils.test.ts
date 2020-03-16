@@ -15,8 +15,32 @@ describe('utils', () => {
         expect(events).toBeLessThan(total * (p * 1.1))
     });
 
+    it('happenedToday should return total for p=1', () => {
+        const p = 1
+        const total = 10000
+        let events = 0
+
+        for (let i = 0; i < total; i++) {
+            if (happenedToday(p)) events++
+        }
+
+        expect(events).toBe(total)
+    });
+
+    it('happenedToday should return 0 for p=0', () => {
+        const p = 0
+        const total = 10000
+        let events = 0
+
+        for (let i = 0; i < total; i++) {
+            if (happenedToday(p)) events++
+        }
+
+        expect(events).toBe(0)
+    });
+
     it('should converge to correct average with probabilityFromAverage', () => {
-        const average = Math.floor(Math.random() * 10) + 5
+        const average = Math.floor(Math.random() * 50) + 5
         const total = 10000
         let activeCases = total
         const eventDates = [0]
@@ -24,15 +48,14 @@ describe('utils', () => {
 
         while (activeCases && day < average * 10) {
             const pToday = probabilityFromAverage(average, day)
-            eventDates[day] = 0
+            let eventsToday = 0
 
             for (let i= 0; i < activeCases; i++) {
-                if (happenedToday(pToday)) {
-                    activeCases--
-                    eventDates[day]++
-                }
+                if (happenedToday(pToday)) eventsToday++
             }
 
+            eventDates[day] = eventsToday
+            activeCases-= eventsToday
             day++
         }
 
