@@ -1,7 +1,6 @@
 import {InfectionStage, IPerson, IVirus} from '../types'
 import {Covid19} from './virus'
 import {happenedToday} from './utils'
-import {log} from 'util'
 
 export class Simulation {
     population: IPerson[]
@@ -39,6 +38,19 @@ export class Simulation {
                     } else if (happenedToday(recoverChance)) {
                         person.heal()
                     }
+                    break;
+                }
+
+                case InfectionStage.severe: {
+                    const deathChance = this.virus.deathChance(person)
+                    const recoverChance = this.virus.recoverChance(person)
+
+                    if (happenedToday(deathChance)) {
+                        person.setStage(InfectionStage.death)
+                    } else if (happenedToday(recoverChance)) {
+                        person.heal()
+                    }
+
                     break;
                 }
 

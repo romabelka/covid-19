@@ -17,7 +17,13 @@ export class Covid19 implements IVirus {
             : 0
     }
 
-    deathChance = (person: IPerson) => 0
+    deathChance = (person: IPerson) => {
+        if (!person.infected || person.infectionsStage !== InfectionStage.severe) return 0
+
+        return person.nextStage === InfectionStage.death
+            ? probabilityFromAverage(this.characteristics.averageSevereToDeathDays, person.currentStageDay)
+            : 0
+    }
 
     recoverChance = (person: IPerson) => {
         if (!person.infected) return 1
@@ -29,7 +35,13 @@ export class Covid19 implements IVirus {
                 : 0
         }
 
-        return 0
+        if (person.infectionsStage === InfectionStage.severe) {
+            return person.nextStage === InfectionStage.healed
+                ? probabilityFromAverage(this.characteristics.averageSevereToHealDays, person.currentStageDay)
+                : 0
+        }
+
+        return 1
     }
 
     symptomsStartChance = (person: IPerson) => {
@@ -45,8 +57,13 @@ export class Covid19 implements IVirus {
                 ? InfectionStage.severe
                 : InfectionStage.healed
         }
+        if (person.infectionsStage === InfectionStage.severe) {
+            return happenedToday(this.characteristics.ageDeathChance.hospitalized[Math.floor(person.age / 10)])
+                ? InfectionStage.death
+                : InfectionStage.healed
+        }
 
-        //todo fix me
+        //todo: Really? Maybe fix me
         return InfectionStage.death
     }
 }
