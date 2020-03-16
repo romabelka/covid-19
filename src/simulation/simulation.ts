@@ -5,11 +5,13 @@ import {happenedToday} from './utils'
 export class Simulation {
     population: IPerson[]
     virus: IVirus
+    hospitalBeds = 0
     day = 0
 
-    constructor(population: IPerson[] = [], virus = new Covid19()) {
+    constructor(population: IPerson[] = [], virus = new Covid19(), hospitalBeds = 0) {
         this.population = population
         this.virus = virus
+        this.hospitalBeds = hospitalBeds
     }
 
     nextDay = () => {
@@ -35,6 +37,8 @@ export class Simulation {
 
                     if (happenedToday(severeChance)) {
                         person.setStage(InfectionStage.severe)
+                        const occupiedBeds = this.population.filter(person => person.hospitalized).length
+                        person.hospitalized = occupiedBeds < this.hospitalBeds
                     } else if (happenedToday(recoverChance)) {
                         person.heal()
                     }

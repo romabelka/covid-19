@@ -489,6 +489,55 @@ describe('Infected Population', () => {
         });
     });
 
+    describe('Hospitalization', () => {
+        it('should hospitalize everyone if enough beds', () => {
+            const total = 100
+
+            const virus = new Covid19({
+                ...testVirusCharacteristics,
+                averageMildToSevereDays: 0,
+                ageSevereChance: Array(10).fill(1)
+            })
+
+            const simulation = new Simulation(getPeople(total, virus, { infectionsStage: InfectionStage.mild }), virus, total + 1)
+
+            simulation.nextDay()
+
+            const { population } = simulation
+
+            expect(population.every(person => person.infectionsStage === InfectionStage.severe)).toBe(true)
+
+            const hospitalized = population.filter(person => person.hospitalized).length
+
+            expect(hospitalized).toBe(total)
+
+        });
+
+        it('should hospitalize people for amount of beds', () => {
+            const total = 1000
+            const beds = 100
+
+            const virus = new Covid19({
+                ...testVirusCharacteristics,
+                averageMildToSevereDays: 0,
+                ageSevereChance: Array(10).fill(1)
+            })
+
+            const simulation = new Simulation(getPeople(total, virus, { infectionsStage: InfectionStage.mild }), virus, beds)
+
+            simulation.nextDay()
+
+            const { population } = simulation
+
+            expect(population.every(person => person.infectionsStage === InfectionStage.severe)).toBe(true)
+
+            const hospitalized = population.filter(person => person.hospitalized).length
+
+            expect(hospitalized).toBe(beds)
+
+        });
+    });
+
     function getPeople(total: number, virus: IVirus, data: Partial<IPersonData>) {
         return Array(total)
             .fill({
