@@ -8,9 +8,11 @@ export interface IPerson {
     currentStageDay: number
     infectionsStage: InfectionStage
     history: Map<InfectionStage, number>
+    nextStage: InfectionStage
 
     setStage: (stage: InfectionStage) => void
     nextDay: () => void
+    heal: () => void
 }
 
 export enum InfectionStage {
@@ -29,6 +31,7 @@ export interface IVirus {
     severeStateChance: (person: IPerson) => number
     deathChance: (person: IPerson) => number
     recoverChance: (person: IPerson) => number
+    getNextStage: (person: IPerson) => InfectionStage
 
     characteristics: IVirusCharacteristics
 }

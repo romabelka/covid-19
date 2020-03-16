@@ -1,5 +1,5 @@
 import {InfectionStage, IPerson, IVirus, IVirusCharacteristics} from '../types'
-import {probabilityFromAverage} from './utils'
+import {happenedToday, probabilityFromAverage} from './utils'
 
 export class Covid19 implements IVirus {
     characteristics: IVirusCharacteristics
@@ -12,20 +12,42 @@ export class Covid19 implements IVirus {
     severeStateChance = (person: IPerson) => {
         if (!person.infected || person.infectionsStage !== InfectionStage.mild) return 0
 
-        const totalChance = this.characteristics.ageSevereChance[Math.floor(person.age / 10)]
-        const averageDays = this.characteristics.averageMildToSevereDays
-
-        return totalChance * probabilityFromAverage(averageDays, person.currentStageDay)
+        return person.nextStage === InfectionStage.severe
+            ? probabilityFromAverage(this.characteristics.averageMildToSevereDays, person.currentStageDay)
+            : 0
     }
 
     deathChance = (person: IPerson) => 0
 
-    recoverChance = () => 0
+    recoverChance = (person: IPerson) => {
+        if (!person.infected) return 1
+        if (person.infectionsStage === InfectionStage.incubation) return 0
+
+        if (person.infectionsStage === InfectionStage.mild) {
+            return person.nextStage === InfectionStage.healed
+                ? probabilityFromAverage(this.characteristics.averageMildToHealDays, person.currentStageDay)
+                : 0
+        }
+
+        return 0
+    }
 
     symptomsStartChance = (person: IPerson) => {
         if (!person.infected || person.infectionsStage !== InfectionStage.incubation) return 0
 
         return probabilityFromAverage(this.characteristics.averageIncubationDays, person.infectionDay)
+    }
+
+    getNextStage = (person: IPerson) => {
+        if (person.infectionsStage === InfectionStage.incubation) return InfectionStage.mild
+        if (person.infectionsStage === InfectionStage.mild) {
+            return happenedToday(this.characteristics.ageSevereChance[Math.floor(person.age / 10)])
+                ? InfectionStage.severe
+                : InfectionStage.healed
+        }
+
+        //todo fix me
+        return InfectionStage.death
     }
 }
 
@@ -33,7 +55,7 @@ const virusCharacteristics: IVirusCharacteristics = {
     transmissionChance: .01,
 
     averageIncubationDays: 10,
-    averageMildToHealDays: 7,
+    averageMildToHealDays: 14,
     averageMildToSevereDays: 7,
     averageSevereToHealDays: 21,
     averageSevereToDeathDays: 5,

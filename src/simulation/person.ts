@@ -20,6 +20,7 @@ export class Person implements IPerson {
     infectionDay: number = 0
     currentStageDay: number = 0
     infectionsStage: InfectionStage = InfectionStage.healthy
+    nextStage: InfectionStage = InfectionStage.incubation
     history = new Map<InfectionStage, number>()
 
     constructor(data: IPersonData) {
@@ -39,5 +40,12 @@ export class Person implements IPerson {
         this.history.set(this.infectionsStage, this.currentStageDay)
         this.currentStageDay = 0
         this.infectionsStage = stage
+    }
+
+    heal = () => {
+        this.setStage(InfectionStage.healthy)
+        this.immune = true
+        this.infected = false
+        this.hospitalized = false
     }
 }
