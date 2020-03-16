@@ -1,4 +1,4 @@
-export interface Person {
+export interface IPerson {
     id: string
     age: number
     immune: boolean
@@ -7,9 +7,14 @@ export interface Person {
     infectionDay: number
     currentStageDay: number
     infectionsStage: InfectionStage
+    history: Map<InfectionStage, number>
+
+    setStage: (stage: InfectionStage) => void
+    nextDay: () => void
 }
 
 export enum InfectionStage {
+    healthy,
     incubation,
     mild,
     severe,
@@ -18,14 +23,17 @@ export enum InfectionStage {
 
 }
 
-export interface Virus {
+export interface IVirus {
     transmissionChance: () => number
-    severeStateChance: (person: Person) => number
-    deathChance: (person: Person) => number
-    recoverChance: (person: Person) => number
+    symptomsStartChance: (person: IPerson) => number
+    severeStateChance: (person: IPerson) => number
+    deathChance: (person: IPerson) => number
+    recoverChance: (person: IPerson) => number
+
+    characteristics: IVirusCharacteristics
 }
 
-export interface VirusCharacteristics {
+export interface IVirusCharacteristics {
     transmissionChance: number,
 
     averageIncubationDays: number,

@@ -1,14 +1,15 @@
-import {InfectionStage, Person, Virus, VirusCharacteristics} from '../types'
+import {InfectionStage, IPerson, IVirus, IVirusCharacteristics} from '../types'
 import {probabilityFromAverage} from './utils'
 
-export class Covid19 implements Virus {
-    private characteristics: VirusCharacteristics
-    constructor(characteristics: VirusCharacteristics = virusCharacteristics) {
+export class Covid19 implements IVirus {
+    characteristics: IVirusCharacteristics
+
+    constructor(characteristics: IVirusCharacteristics = virusCharacteristics) {
         this.characteristics = characteristics
     }
     transmissionChance = () => this.characteristics.transmissionChance
 
-    severeStateChance = (person: Person) => {
+    severeStateChance = (person: IPerson) => {
         if (!person.infected || person.infectionsStage !== InfectionStage.mild) return 0
 
         const totalChance = this.characteristics.ageSevereChance[Math.floor(person.age / 10)]
@@ -17,12 +18,18 @@ export class Covid19 implements Virus {
         return totalChance * probabilityFromAverage(averageDays, person.currentStageDay)
     }
 
-    deathChance = (person: Person) => 0
+    deathChance = (person: IPerson) => 0
 
     recoverChance = () => 0
+
+    symptomsStartChance = (person: IPerson) => {
+        if (!person.infected || person.infectionsStage !== InfectionStage.incubation) return 0
+
+        return probabilityFromAverage(this.characteristics.averageIncubationDays, person.infectionDay)
+    }
 }
 
-const virusCharacteristics: VirusCharacteristics = {
+const virusCharacteristics: IVirusCharacteristics = {
     transmissionChance: .01,
 
     averageIncubationDays: 10,
