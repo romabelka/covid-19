@@ -22,7 +22,6 @@ export enum InfectionStage {
     severe,
     death,
     healed
-
 }
 
 export interface IVirus {

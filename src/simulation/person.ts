@@ -43,7 +43,7 @@ export class Person implements IPerson {
     }
 
     heal = () => {
-        this.setStage(InfectionStage.healthy)
+        this.setStage(InfectionStage.healed)
         this.immune = true
         this.infected = false
         this.hospitalized = false

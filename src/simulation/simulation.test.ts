@@ -152,6 +152,39 @@ describe('Infected Population', () => {
         expect(averageMildToHeal).toBeLessThan(virus.characteristics.averageMildToHealDays * 1.1)
     });
 
+    it('should converge to correct heal from mild rate 90%', () => {
+        const healRate = 0.25
+        const total = 500
+
+        const virus = new Covid19({
+            ...testVirusCharacteristics,
+            ageSevereChance: Array(10).fill(1 - healRate),
+        })
+
+        const simulation = new Simulation(getPeople(total, virus, InfectionStage.mild), virus)
+        const { characteristics } = virus
+
+
+        while (
+            simulation.population.some(person => person.infectionsStage === InfectionStage.mild)
+            && simulation.day < Math.max( characteristics.averageMildToSevereDays, characteristics.averageMildToHealDays) * 5
+            ) {
+            simulation.nextDay()
+        }
+
+        const { population } = simulation
+
+        expect(population.some(person => person.infectionsStage === InfectionStage.mild)).toBe(false)
+
+        const healedCases = simulation.population
+            .filter(person =>
+                person.infectionsStage === InfectionStage.healed
+                && !person.history.get(InfectionStage.severe)
+            )
+
+        expect(healedCases.length).toBeGreaterThan(total * healRate * 0.9)
+        expect(healedCases.length).toBeLessThan(total * healRate * 1.1)
+    });
 
     function getPeople(total: number, virus: IVirus, infectionsStage: InfectionStage) {
         return Array(total)
