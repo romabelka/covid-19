@@ -58,9 +58,14 @@ export class Covid19 implements IVirus {
                 : InfectionStage.healed
         }
         if (person.infectionsStage === InfectionStage.severe) {
-            return happenedToday(this.characteristics.ageDeathChance.hospitalized[Math.floor(person.age / 10)])
+            const deathRates = person.hospitalized
+                ? this.characteristics.ageDeathChance.hospitalized
+                : this.characteristics.ageDeathChance.home
+
+            return happenedToday(deathRates[Math.floor(person.age / 10)])
                 ? InfectionStage.death
                 : InfectionStage.healed
+
         }
 
         //todo: Really? Maybe fix me
