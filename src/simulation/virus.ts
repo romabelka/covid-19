@@ -86,7 +86,7 @@ const virusCharacteristics: IVirusCharacteristics = {
 
 
     ageDeathChance: {
-        hospitalized: [.1, .1, .1, .2, .2, .3, .4, .5, .6, .8],
+        hospitalized: [.1, .1, .1, .2, .2, .3, .4, .5, .3, .3],
         home: [.3, .3, .3, .6, .6, .8, .9, .95, .95, 1]
         //home: [1, 1, 1, 1, 1, 1, 1, 1, 1]
     }

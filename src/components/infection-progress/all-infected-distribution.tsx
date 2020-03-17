@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {InfectionStage} from '../../types'
+import {InfectionStage, IPerson} from '../../types'
 import {DataChart, ITotals} from './data-chart'
 import {InfectionControls, ISimulationData} from './infection-progress-controls'
 import {Person} from '../../simulation/person'
@@ -42,11 +42,29 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
         })
     }
 
-    const totalInfected = simulation.population.filter(p => p.infectionsStage !== InfectionStage.healthy)
+    const totals = {
+        general: getTotals(simulation.population),
+        byAge: Array(10).fill(0).map((_, age) =>
+            getTotals(simulation.population.filter(p => p.age >= age * 10 && p.age < (age + 1) * 10))
+        )
+    }
 
-    const totals: ITotals = {
-        total: simulation.population.length,
-        dead: simulation.population.filter(p => p.infectionsStage === InfectionStage.death).length,
+    return (
+        <div>
+            <h1>Naive Infection Distribution</h1>
+            <DataChart data={data} totals={totals}/>
+            <InfectionControls simulationData={simulationData} setSimulationData={setSimulationData}    />
+        </div>
+    )
+}
+
+
+function getTotals(population: IPerson[]): ITotals {
+    const totalInfected = population.filter(p => p.infectionsStage !== InfectionStage.healthy)
+
+    return {
+        total: population.length,
+        dead: population.filter(p => p.infectionsStage === InfectionStage.death).length,
         infected: totalInfected.length,
         healed: population.filter(p => p.infectionsStage === InfectionStage.healed).length,
         onlyMildSymptoms: totalInfected.filter(p =>
@@ -57,12 +75,4 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
         ).length
 
     }
-
-    return (
-        <div>
-            <h1>Naive Infection Distribution</h1>
-            <DataChart data={data} totals={totals}/>
-            <InfectionControls simulationData={simulationData} setSimulationData={setSimulationData}    />
-        </div>
-    )
 }

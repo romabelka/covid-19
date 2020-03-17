@@ -1,6 +1,5 @@
 import React from 'react'
-import {Divider} from 'antd'
-import {InfectionStage} from '../../types'
+import {Divider, Table} from 'antd'
 
 export interface DayData {
     total: number
@@ -23,7 +22,10 @@ export interface ITotals {
 
 export interface DataChartProps {
     data: DayData[]
-    totals: ITotals
+    totals: {
+        byAge: ITotals[]
+        general: ITotals
+    }
 }
 
 export const DataChart: React.FC<DataChartProps> = ({ data, totals }) => {
@@ -59,33 +61,80 @@ export const DataChart: React.FC<DataChartProps> = ({ data, totals }) => {
       </React.Fragment>
     ))
 
+    const {general, byAge} = totals
+
     return (
         <div>
             <svg width={width} height={height}>
                 {days}
             </svg>
+            {getLegend(general)}
+            {statsByAge(byAge)}
+        </div>
+    )
+}
+
+function statsByAge(data: ITotals[]) {
+    const tableData = data.map((totals, ageGroup) => ({
+        key: ageGroup,
+        total: totals.total,
+        age: `${ageGroup*10}-${ageGroup*10 + 9}`,
+        deathRateAll: `${(100 * totals.dead / totals.infected).toFixed(1)}%`,
+        deathRateClosed: `${(100 * totals.dead / (totals.dead + totals.healed)).toFixed(1)}%`,
+        mildOnly: `${(100 * totals.onlyMildSymptoms / totals.infected).toFixed(1)}%`
+    }))
+
+    const columns = [{
+        key: 'age',
+        title: 'Age Group',
+        dataIndex: 'age'
+    }, {
+        key: 'total',
+        title: 'Total',
+        dataIndex: 'total'
+    }, {
+        key: 'deathRateAll',
+        title: 'Mortality, all cases',
+        dataIndex: 'deathRateAll'
+    }, {
+        key: 'deathRateClosed',
+        title: 'Mortality, closed cases',
+        dataIndex: 'deathRateClosed'
+    }, {
+        key: 'mildOnly',
+        title: 'Mild cases',
+        dataIndex: 'mildOnly'
+    }]
+    return (
+        <Table dataSource={tableData} columns={columns}/>
+    )
+}
+
+function getLegend(data: ITotals) {
+    return (
+        <>
             <h3 style={{ color: 'black' }}>
-                Dead: {totals.dead},
-                {(100*totals.dead/totals.infected).toFixed(1)}% Dead/All Cases,
-                {(100*totals.dead/(totals.healed + totals.dead)).toFixed(1)}% Dead/Closed Cases,
+                Dead: {data.dead},
+                {(100*data.dead/data.infected).toFixed(1)}% Dead/All Cases,
+                {(100*data.dead/(data.healed + data.dead)).toFixed(1)}% Dead/Closed Cases,
             </h3>
-            <h3 style={{ color: 'green' }}>Healed: {totals.healed}</h3>
+            <h3 style={{ color: 'green' }}>Healed: {data.healed}</h3>
             <h3 style={{ color: 'grey'}}>
-                Not Infected: {totals.total - totals.infected}
-                ({(100*(1 - totals.infected/totals.total)).toFixed(1)}%)
+                Not Infected: {data.total - data.infected}
+                ({(100*(1 - data.infected/data.total)).toFixed(1)}%)
             </h3>
             <h3 style={{ color: 'orange'}}>
-                Mild symptoms: {totals.onlyMildSymptoms}
-                ({(100*totals.onlyMildSymptoms/totals.infected).toFixed(1)}%)
+                Mild symptoms: {data.onlyMildSymptoms}
+                ({(100*data.onlyMildSymptoms/data.infected).toFixed(1)}%)
             </h3>
             <h3 style={{ color: 'red'}}>
-                Severe symptoms: {totals.hadSevereSymptoms}
-                ({(100*totals.hadSevereSymptoms/totals.infected).toFixed(1)}%)
+                Severe symptoms: {data.hadSevereSymptoms}
+                ({(100*data.hadSevereSymptoms/data.infected).toFixed(1)}%)
             </h3>
             <h3 style={{ color: 'yellow'}}>Incubation</h3>
             <Divider />
-            <h3>Total population: {totals.total}</h3>
-            <h3>Total cases: {totals.infected}</h3>
-        </div>
+            <h3>Total population: {data.total}</h3>
+            <h3>Total cases: {data.infected}</h3>
+        </>
     )
 }
