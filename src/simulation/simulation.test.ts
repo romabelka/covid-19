@@ -567,7 +567,7 @@ describe('Infected Population', () => {
             const increase = cases.map(casesToday => casesToday / infectedStart)
             const midDay = Math.floor(days / 2) - 1
 
-            expect(increase[midDay]).toBeCloseTo(increase[2 * midDay] / increase[midDay], 1)
+            expect(increase[midDay]).toBeCloseTo(increase[2 * midDay] / increase[midDay], 0)
         });
 
         it('should exponentially reflect social contacts', () => {
@@ -609,7 +609,56 @@ describe('Infected Population', () => {
 
             const midDay = Math.floor(days / 2) - 1
 
-            expect(Math.pow(cases2[midDay]/cases1[midDay], 2)).toBeCloseTo(cases2[2 * midDay] / cases1[2 * midDay], 1)
+            expect(Math.pow(cases2[midDay]/cases1[midDay], 2)).toBeCloseTo( cases2[2 * midDay] / cases1[2 * midDay], 0)
+        });
+
+        it('should exponentially reflect transmission rate', () => {
+            const infectedStart = 1
+            const total = 100000
+            const days = 12
+
+            const virus1 = new Covid19({
+                ...testVirusCharacteristics,
+                averageIncubationDays: 5000,
+                transmissionChance: 0.1
+            })
+
+            const virus2 = new Covid19({
+                ...testVirusCharacteristics,
+                averageIncubationDays: 5000,
+                transmissionChance: 0.2
+            })
+
+            const population1 = [
+                ...getPeople(infectedStart, virus1, { infectionsStage: InfectionStage.incubation }),
+                ...getPeople(total - infectedStart, virus1, { infected: false })
+            ]
+
+            const population2 = [
+                ...getPeople(infectedStart, virus2, { infectionsStage: InfectionStage.incubation }),
+                ...getPeople(total - infectedStart, virus2, { infected: false })
+            ]
+
+            const simulation1 = new Simulation(population1, virus1, 0, 5)
+            const simulation2 = new Simulation(population2, virus2, 0, 5)
+
+            const cases1 = []
+            const cases2 = []
+
+            for (let i = 0; i < days; i++) {
+                cases1[i] = simulation1.population.filter(p => p.infected).length
+                cases2[i] = simulation2.population.filter(p => p.infected).length
+                simulation1.nextDay()
+                simulation2.nextDay()
+            }
+
+            expect(cases2[0]).toEqual(cases1[0])
+            expect(cases2[days - 1]).toBeGreaterThan(cases1[days - 1])
+
+            const midDay = Math.floor(days / 2) - 1
+
+
+            expect(Math.pow(cases2[2 * midDay] / cases1[2 * midDay], 2)).toBeGreaterThan( 2 * cases2[midDay] / cases1[midDay])
         });
     })
 

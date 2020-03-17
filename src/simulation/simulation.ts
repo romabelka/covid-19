@@ -79,7 +79,9 @@ export class Simulation implements ISimulation{
         this.population
             .filter(p => p.infected)
             .forEach(() => {
-                getRandomSubArray(this.population, this.averageSocialContacts).forEach(p => p.infect())
+                getRandomSubArray(this.population, this.averageSocialContacts)
+                    .forEach(p => happenedToday(this.virus.transmissionChance()) && p.infect())
             })
     }
 }
+
