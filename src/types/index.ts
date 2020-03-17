@@ -53,4 +53,12 @@ export interface IVirusCharacteristics {
     }
 }
 
+export interface ISimulation {
+    population: IPerson[]
+    virus: IVirus
+    day: number
+
+    nextDay: () => void
+}
+
 

@@ -1,11 +1,12 @@
-import {InfectionStage, IPerson, IVirus} from '../types'
+import {InfectionStage, IPerson, ISimulation, IVirus} from '../types'
 import {Covid19} from './virus'
 import {happenedToday} from './utils'
 
-export class Simulation {
+export class Simulation implements ISimulation{
+    private hospitalBeds = 0
+
     population: IPerson[]
     virus: IVirus
-    hospitalBeds = 0
     day = 0
 
     constructor(population: IPerson[] = [], virus = new Covid19(), hospitalBeds = 0) {
@@ -39,6 +40,7 @@ export class Simulation {
                         person.setStage(InfectionStage.severe)
                         const occupiedBeds = this.population.filter(person => person.hospitalized).length
                         person.hospitalized = occupiedBeds < this.hospitalBeds
+                        person.nextStage = this.virus.getNextStage(person)
                     } else if (happenedToday(recoverChance)) {
                         person.heal()
                     }

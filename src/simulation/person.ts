@@ -9,6 +9,7 @@ export interface IPersonData {
     infectionDay?: number
     currentStageDay?: number
     infectionsStage?: InfectionStage
+    nextStage?: InfectionStage
 }
 
 export class Person implements IPerson {
