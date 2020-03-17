@@ -1,5 +1,6 @@
 import React from 'react'
 import {PopulationControl} from '../controls/population'
+import {HospitalsControl} from '../controls/hospitals'
 
 export interface ISimulationData {
     infectedPopulation: number[],
@@ -22,9 +23,15 @@ export const InfectionControls: React.FC<InfectionControlsProps> = ({ simulation
         })
     }
 
+    const handleHospitalsChange = (hospitalBeds: number) => setSimulationData({
+        ...simulationData,
+        hospitalBeds
+    })
+
     return (
         <div>
             <h2>Controls</h2>
+            <HospitalsControl hospitalBeds={simulationData.hospitalBeds} handleHospitalsChange={handleHospitalsChange}/>
             <PopulationControl population={simulationData.infectedPopulation} handlePopulationChange={handlePopulationChange}/>
         </div>
     )
