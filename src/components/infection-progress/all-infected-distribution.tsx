@@ -5,13 +5,14 @@ import {InfectionControls, ISimulationData} from './infection-progress-controls'
 import {Person} from '../../simulation/person'
 import {Simulation} from '../../simulation/simulation'
 import {Covid19} from '../../simulation/virus'
+import {getRandomSubArray} from '../../simulation/utils'
 
 export interface AllInfectedDistributionProps {
 }
 
 const defaultSimulation: ISimulationData = {
     infectedPopulation: [1e3, 1e3, 1e3, 1e3, 1e3, 1e3, 1e3, 1e3, 1e3, 1e3],
-    hospitalBeds: 1e3
+    hospitalBeds: 1e2
 }
 
 export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = ({ }) => {
@@ -19,12 +20,12 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
 
     const population = simulationData.infectedPopulation
         .flatMap((amount, group) =>
-            Array(amount).fill(group * 10 + 5).map(age => new Person({
-                age, infected: true, infectionsStage: InfectionStage.incubation
-            }))
+            Array(amount).fill(group * 10 + 5).map(age => new Person({ age }))
         )
 
-    const simulation = new Simulation(population, new Covid19(), simulationData.hospitalBeds)
+    getRandomSubArray(population, 100).forEach(person => person.infect())
+
+    const simulation = new Simulation(population, new Covid19(), simulationData.hospitalBeds, 10)
 
     const data = []
 

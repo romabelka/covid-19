@@ -31,18 +31,18 @@ export const DataChart: React.FC<DataChartProps> = ({ data }) => {
 
     const days = normalizedData.map((day, i) => (
       <React.Fragment key={i}>
-          <rect width={itemWidth} height={height * day.healthy} x={i * itemWidth}
-                y = {0} fill="grey"/>
-          <rect width={itemWidth} height={height * day.healed} x={i * itemWidth}
-                y = {day.healthy * height} fill="green"/>
-          <rect width={itemWidth} height={height * day.incubation} x={i * itemWidth}
-                y = {(day.healthy + day.healed) * height} fill="yellow"/>
-          <rect width={itemWidth} height={height * day.mild} x={i * itemWidth}
-                y = {(day.healthy + day.healed + day.incubation) * height} fill="orange"/>
-          <rect width={itemWidth} height={height * day.severe} x={i * itemWidth}
-                y = {(day.healthy + day.healed + day.incubation + day.mild) * height} fill="red"/>
           <rect width={itemWidth} height={height * day.death} x={i * itemWidth}
-                y = {(day.healthy + day.healed + day.incubation + day.mild + day.severe) * height} fill="black"/>
+                y = {0} fill="black"/>
+          <rect width={itemWidth} height={height * day.healthy} x={i * itemWidth}
+                y = {day.death * height} fill="grey"/>
+          <rect width={itemWidth} height={height * day.healed} x={i * itemWidth}
+                y = {(day.death + day.healthy) * height} fill="green"/>
+          <rect width={itemWidth} height={height * day.incubation} x={i * itemWidth}
+                y = {(day.death + day.healthy + day.healed) * height} fill="yellow"/>
+          <rect width={itemWidth} height={height * day.mild} x={i * itemWidth}
+                y = {(day.death + day.healthy + day.healed + day.incubation) * height} fill="orange"/>
+          <rect width={itemWidth} height={height * day.severe} x={i * itemWidth}
+                y = {(day.death + day.healthy + day.healed + day.incubation + day.mild) * height} fill="red"/>
           <rect width={itemWidth} height={2}  x={i * itemWidth} y={height - height * day.beds} fill="blue"/>
       </React.Fragment>
     ))
