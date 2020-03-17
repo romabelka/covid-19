@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {InfectionStage} from '../../types'
-import {DataChart} from './data-chart'
+import {DataChart, ITotals} from './data-chart'
 import {InfectionControls, ISimulationData} from './infection-progress-controls'
 import {Person} from '../../simulation/person'
 import {Simulation} from '../../simulation/simulation'
@@ -29,7 +29,7 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
 
     const data = []
 
-    for (let day = 0; day < 100; day++) {
+    for (let day = 0; day < 200; day++) {
         simulation.nextDay();
         data.push({
             total: population.length,
@@ -42,10 +42,26 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
         })
     }
 
+    const totalInfected = simulation.population.filter(p => p.infectionsStage !== InfectionStage.healthy)
+
+    const totals: ITotals = {
+        total: simulation.population.length,
+        dead: simulation.population.filter(p => p.infectionsStage === InfectionStage.death).length,
+        infected: totalInfected.length,
+        healed: population.filter(p => p.infectionsStage === InfectionStage.healed).length,
+        onlyMildSymptoms: totalInfected.filter(p =>
+            p.history.has(InfectionStage.incubation) && !p.history.get(InfectionStage.severe)
+        ).length,
+        hadSevereSymptoms: totalInfected.filter(p =>
+            p.history.has(InfectionStage.severe) || p.infectionsStage === InfectionStage.severe
+        ).length
+
+    }
+
     return (
         <div>
             <h1>Naive Infection Distribution</h1>
-            <DataChart data={data}/>
+            <DataChart data={data} totals={totals}/>
             <InfectionControls simulationData={simulationData} setSimulationData={setSimulationData}    />
         </div>
     )

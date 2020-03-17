@@ -1,4 +1,6 @@
 import React from 'react'
+import {Divider} from 'antd'
+import {InfectionStage} from '../../types'
 
 export interface DayData {
     total: number
@@ -10,11 +12,21 @@ export interface DayData {
     hospitalBeds: number
 }
 
-export interface DataChartProps {
-    data: DayData[]
+export interface ITotals {
+    total: number,
+    dead: number,
+    healed: number,
+    infected: number,
+    onlyMildSymptoms: number,
+    hadSevereSymptoms: number
 }
 
-export const DataChart: React.FC<DataChartProps> = ({ data }) => {
+export interface DataChartProps {
+    data: DayData[]
+    totals: ITotals
+}
+
+export const DataChart: React.FC<DataChartProps> = ({ data, totals }) => {
     const width = 1000
     const height = 500
     const itemWidth = Math.floor(width / data.length)
@@ -48,8 +60,32 @@ export const DataChart: React.FC<DataChartProps> = ({ data }) => {
     ))
 
     return (
-        <svg width={width} height={height}>
-            {days}
-        </svg>
+        <div>
+            <svg width={width} height={height}>
+                {days}
+            </svg>
+            <h3 style={{ color: 'black' }}>
+                Dead: {totals.dead},
+                {(100*totals.dead/totals.infected).toFixed(1)}% Dead/All Cases,
+                {(100*totals.dead/(totals.healed + totals.dead)).toFixed(1)}% Dead/Closed Cases,
+            </h3>
+            <h3 style={{ color: 'green' }}>Healed: {totals.healed}</h3>
+            <h3 style={{ color: 'grey'}}>
+                Not Infected: {totals.total - totals.infected}
+                ({(100*(1 - totals.infected/totals.total)).toFixed(1)}%)
+            </h3>
+            <h3 style={{ color: 'orange'}}>
+                Mild symptoms: {totals.onlyMildSymptoms}
+                ({(100*totals.onlyMildSymptoms/totals.infected).toFixed(1)}%)
+            </h3>
+            <h3 style={{ color: 'red'}}>
+                Severe symptoms: {totals.hadSevereSymptoms}
+                ({(100*totals.hadSevereSymptoms/totals.infected).toFixed(1)}%)
+            </h3>
+            <h3 style={{ color: 'yellow'}}>Incubation</h3>
+            <Divider />
+            <h3>Total population: {totals.total}</h3>
+            <h3>Total cases: {totals.infected}</h3>
+        </div>
     )
 }
