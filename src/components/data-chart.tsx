@@ -7,6 +7,7 @@ export interface DayData {
     severe: number
     death: number
     healed: number
+    hospitalBeds: number
 }
 
 export interface DataChartProps {
@@ -24,7 +25,8 @@ export const DataChart: React.FC<DataChartProps> = ({ data }) => {
         mild: day.mild / day.total,
         incubation: day.incubation / day.total,
         healed: day.healed / day.total,
-        healthy: (day.total - day.death - day.severe - day.mild - day.incubation - day.healed) /day.total
+        healthy: (day.total - day.death - day.severe - day.mild - day.incubation - day.healed) /day.total,
+        beds: day.hospitalBeds / day.total
     }))
 
     const days = normalizedData.map((day, i) => (
@@ -41,6 +43,7 @@ export const DataChart: React.FC<DataChartProps> = ({ data }) => {
                 y = {(day.healthy + day.healed + day.incubation + day.mild) * height} fill="red"/>
           <rect width={itemWidth} height={height * day.death} x={i * itemWidth}
                 y = {(day.healthy + day.healed + day.incubation + day.mild + day.severe) * height} fill="black"/>
+          <rect width={itemWidth} height={2}  x={i * itemWidth} y={height - height * day.beds} fill="blue"/>
       </React.Fragment>
     ))
 

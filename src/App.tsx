@@ -9,12 +9,12 @@ const population = Array(10000)
     .fill(0)
     .map((_, i) => new Person({
         age: Math.floor(i / 100),
-        infected: !!(i % 2),
-        infectionsStage: i % 2 ? InfectionStage.incubation : InfectionStage.healthy,
-        nextStage: i % 2 ? InfectionStage.mild : InfectionStage.healthy
+        infected: true,
+        infectionsStage: InfectionStage.incubation,
+        nextStage: InfectionStage.mild
     }))
 
-const simulation = new Simulation(population, new Covid19(), 100)
+const simulation = new Simulation(population, new Covid19(), 1000)
 
 function App() {
   return (

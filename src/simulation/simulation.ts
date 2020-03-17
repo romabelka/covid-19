@@ -3,8 +3,7 @@ import {Covid19} from './virus'
 import {happenedToday} from './utils'
 
 export class Simulation implements ISimulation{
-    private hospitalBeds = 0
-
+    hospitalBeds = 0
     population: IPerson[]
     virus: IVirus
     day = 0

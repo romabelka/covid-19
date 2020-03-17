@@ -57,6 +57,7 @@ export interface ISimulation {
     population: IPerson[]
     virus: IVirus
     day: number
+    hospitalBeds: number
 
     nextDay: () => void
 }

@@ -19,6 +19,7 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
             severe: population.filter(p => p.infectionsStage === InfectionStage.severe).length,
             death: population.filter(p => p.infectionsStage === InfectionStage.death).length,
             healed: population.filter(p => p.infectionsStage === InfectionStage.healed).length,
+            hospitalBeds: simulation.hospitalBeds
         })
     }
 
