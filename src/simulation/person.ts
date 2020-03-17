@@ -28,6 +28,9 @@ export class Person implements IPerson {
         this.id = uuid.v4()
         this.age = data.age
         Object.assign(this, data)
+        if (this.infectionsStage === InfectionStage.incubation) {
+            this.nextStage = InfectionStage.mild
+        }
     }
 
     nextDay = () => {
