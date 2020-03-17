@@ -78,6 +78,7 @@ function statsByAge(data: ITotals[]) {
     const tableData = data.map((totals, ageGroup) => ({
         key: ageGroup,
         total: totals.total,
+        infected: totals.infected,
         age: `${ageGroup*10}-${ageGroup*10 + 9}`,
         deathRateAll: `${(100 * totals.dead / totals.infected).toFixed(1)}%`,
         deathRateClosed: `${(100 * totals.dead / (totals.dead + totals.healed)).toFixed(1)}%`,
@@ -89,9 +90,9 @@ function statsByAge(data: ITotals[]) {
         title: 'Age Group',
         dataIndex: 'age'
     }, {
-        key: 'total',
-        title: 'Total',
-        dataIndex: 'total'
+        key: 'infected',
+        title: 'Infected',
+        dataIndex: 'infected'
     }, {
         key: 'deathRateAll',
         title: 'Mortality, all cases',

@@ -11,8 +11,8 @@ export interface AllInfectedDistributionProps {
 }
 
 const defaultSimulation: ISimulationData = {
-    infectedPopulation: [1e3, 1e3, 1e3, 1e3, 1e3, 1e3, 1e3, 1e3, 1e3, 1e3],
-    hospitalBeds: 1e2
+    infectedPopulation: [1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4],
+    hospitalBeds: 1e4
 }
 
 export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = ({ }) => {
@@ -29,7 +29,7 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
 
     const data = []
 
-    for (let day = 0; day < 200; day++) {
+    for (let day = 0; day < 70; day++) {
         simulation.nextDay();
         data.push({
             total: population.length,
@@ -53,7 +53,7 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
         <div>
             <h1>Naive Infection Distribution</h1>
             <DataChart data={data} totals={totals}/>
-            <InfectionControls simulationData={simulationData} setSimulationData={setSimulationData}    />
+            <InfectionControls simulationData={simulationData} setSimulationData={setSimulationData} />
         </div>
     )
 }

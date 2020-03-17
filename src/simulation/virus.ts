@@ -82,12 +82,11 @@ const virusCharacteristics: IVirusCharacteristics = {
     averageSevereToHealDays: 21,
     averageSevereToDeathDays: 5,
 
-    ageSevereChance: [.01, .01, .01, .02, .03, .08, .15, .3, .4, .6],
-
+    ageSevereChance: [.01, .04, .04, .04, .08, .18, .4, .6, .72, .8],
 
     ageDeathChance: {
-        hospitalized: [.1, .1, .1, .2, .2, .3, .4, .5, .3, .3],
-        home: [.3, .3, .3, .6, .6, .8, .9, .95, .95, 1]
-        //home: [1, 1, 1, 1, 1, 1, 1, 1, 1]
+        hospitalized: [.1, .2, .2, .2, .25, .3, .38, .53, .75, .8],
+        home: [.1, .25, .25, .25, .35, .4, .5, .65, .9, .95],
+//        home: [.3, .3, .3, .6, .6, .8, .9, .95, .95, 1]
     }
 }
