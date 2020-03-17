@@ -52,4 +52,14 @@ export class Person implements IPerson {
         this.infected = false
         this.hospitalized = false
     }
+
+    infect = () => {
+        if (this.immune || this.infected) return;
+
+        this.infected = true
+        this.infectionsStage = InfectionStage.incubation
+        this.nextStage = InfectionStage.mild
+        this.infectionDay = 0
+        this.currentStageDay = 0
+    }
 }

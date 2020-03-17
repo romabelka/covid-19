@@ -1,5 +1,4 @@
 // @ts-ignore
-//import {probabilityFromAverage, happenedToday} from './utils'
 
 import {Simulation} from './simulation'
 import {Covid19} from './virus'
@@ -537,6 +536,82 @@ describe('Infected Population', () => {
 
         });
     });
+
+    describe('Spread', () => {
+        it('should spread exponentially in the beginning', () => {
+            const infectedStart = 2
+            const total = 10000
+            const days = 8
+
+            const virus = new Covid19({
+                ...testVirusCharacteristics,
+                averageIncubationDays: 10000,
+                transmissionChance: 1
+            })
+
+            const population = [
+                ...getPeople(infectedStart, virus, { infectionsStage: InfectionStage.incubation }),
+                ...getPeople(total - infectedStart, virus, { infected: false })
+            ]
+
+            const simulation = new Simulation(population, virus, 0)
+            const cases = []
+
+            for (let i =0; i < days; i++) {
+                cases[i] = simulation.population.filter(p => p.infected).length
+                simulation.nextDay()
+            }
+
+            expect(cases[days - 1]).toBeGreaterThan(cases[0])
+
+            const increase = cases.map(casesToday => casesToday / infectedStart)
+            const midDay = Math.floor(days / 2) - 1
+
+            expect(increase[midDay]).toBeCloseTo(increase[2 * midDay] / increase[midDay], 1)
+        });
+
+        it('should exponentially reflect social contacts', () => {
+            const infectedStart = 1
+            const total = 100000
+            const days = 8
+
+            const virus = new Covid19({
+                ...testVirusCharacteristics,
+                averageIncubationDays: 5000,
+                transmissionChance: 1
+            })
+
+            const population1 = [
+                ...getPeople(infectedStart, virus, { infectionsStage: InfectionStage.incubation }),
+                ...getPeople(total - infectedStart, virus, { infected: false })
+            ]
+
+            const population2 = [
+                ...getPeople(infectedStart, virus, { infectionsStage: InfectionStage.incubation }),
+                ...getPeople(total - infectedStart, virus, { infected: false })
+            ]
+
+            const simulation1 = new Simulation(population1, virus, 0, 1)
+            const simulation2 = new Simulation(population2, virus, 0, 2)
+
+            const cases1 = []
+            const cases2 = []
+
+            for (let i = 0; i < days; i++) {
+                cases1[i] = simulation1.population.filter(p => p.infected).length
+                cases2[i] = simulation2.population.filter(p => p.infected).length
+                simulation1.nextDay()
+                simulation2.nextDay()
+            }
+
+            expect(cases2[0]).toEqual(cases1[0])
+            expect(cases2[days - 1]).toBeGreaterThan(cases1[days - 1])
+
+            const midDay = Math.floor(days / 2) - 1
+
+            expect(Math.pow(cases2[midDay]/cases1[midDay], 2)).toBeCloseTo(cases2[2 * midDay] / cases1[2 * midDay], 1)
+        });
+    })
 
     function getPeople(total: number, virus: IVirus, data: Partial<IPersonData>) {
         return Array(total)

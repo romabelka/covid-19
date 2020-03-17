@@ -13,6 +13,7 @@ export interface IPerson {
     setStage: (stage: InfectionStage) => void
     nextDay: () => void
     heal: () => void
+    infect: () => void
 }
 
 export enum InfectionStage {

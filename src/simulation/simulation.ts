@@ -1,22 +1,33 @@
 import {InfectionStage, IPerson, ISimulation, IVirus} from '../types'
 import {Covid19} from './virus'
-import {happenedToday} from './utils'
+import {getRandomSubArray, happenedToday} from './utils'
 
 export class Simulation implements ISimulation{
     hospitalBeds = 0
     population: IPerson[]
     virus: IVirus
     day = 0
+    averageSocialContacts = 1
 
-    constructor(population: IPerson[] = [], virus = new Covid19(), hospitalBeds = 0) {
+    constructor(population: IPerson[] = [],
+                virus = new Covid19(),
+                hospitalBeds = 0,
+                socialContacts = 1
+    ) {
         this.population = population
         this.virus = virus
         this.hospitalBeds = hospitalBeds
+        this.averageSocialContacts = socialContacts
     }
 
     nextDay = () => {
         this.day++
 
+        this.progressInfection()
+        this.progressSpread()
+    }
+
+    private progressInfection() {
         this.population.forEach(person => {
             if (!person.infected) return;
             person.nextDay()
@@ -62,5 +73,13 @@ export class Simulation implements ISimulation{
                 default: break;
             }
         })
+    }
+
+    private progressSpread() {
+        this.population
+            .filter(p => p.infected)
+            .forEach(() => {
+                getRandomSubArray(this.population, this.averageSocialContacts).forEach(p => p.infect())
+            })
     }
 }

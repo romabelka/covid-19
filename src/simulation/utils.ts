@@ -7,3 +7,12 @@ export function probabilityFromAverage(average: number, value: number): number {
 export function happenedToday(probability: number): boolean {
     return Math.random() < probability
 }
+
+export function getRandomSubArray<T>(arr: T[], subLength: number): T[] {
+    const set = new Set<number>()
+    while (set.size < subLength) {
+        set.add(Math.floor(Math.random() * arr.length))
+    }
+
+    return [...set].map(i => arr[i])
+}
