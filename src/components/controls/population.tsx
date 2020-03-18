@@ -22,6 +22,7 @@ export const PopulationControl: React.FC<PopulationProps> = ({ population, handl
         ))
     return (
         <div>
+            <h3>Population:</h3>
             {sliders}
         </div>
     )

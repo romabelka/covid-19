@@ -12,7 +12,9 @@ export interface AllInfectedDistributionProps {
 
 const defaultSimulation: ISimulationData = {
     infectedPopulation: [1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e3, 1e3, 1e3, 1e3],
-    hospitalBeds: 10
+    hospitalBeds: 10,
+    days: 200,
+    socialContacts: 5
 }
 
 export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = ({ }) => {
@@ -25,9 +27,9 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
 
     getRandomSubArray(population, 100).forEach(person => person.infect())
 
-    const simulation = new Simulation(population, new Covid19(), simulationData.hospitalBeds, 5)
+    const simulation = new Simulation(population, new Covid19(), simulationData.hospitalBeds, simulationData.socialContacts)
 
-    const data = simulation.run(200)
+    const data = simulation.run(simulationData.days)
 
     const totals = {
         general: getTotals(simulation.population),
