@@ -31,13 +31,35 @@ export class Simulation implements ISimulation{
         const history = []
         for (let day = 0; day < days; day++) {
             this.nextDay();
+            
+            let incubation  = 0;
+            let mild        = 0;
+            let severe      = 0;
+            let death       = 0;
+            let healed      = 0;
+            
+            let FAincubation = InfectionStage.incubation;
+            let FAmild       = InfectionStage.mild      ;
+            let FAsevere     = InfectionStage.severe    ;
+            let FAdeath      = InfectionStage.death     ;
+            let FAhealed     = InfectionStage.healed    ;
+            
+            for (let i = 0, list = this.population, len = list.length; i < len; i++) {
+                switch (list[i].infectionsStage) {
+                    case FAincubation:incubation++;break;
+                    case FAmild      :mild      ++;break;
+                    case FAsevere    :severe    ++;break;
+                    case FAdeath     :death     ++;break;
+                    case FAhealed    :healed    ++;break;
+                }
+            }
             history.push({
-                total: this.population.length,
-                incubation: this.population.filter(p => p.infectionsStage === InfectionStage.incubation).length,
-                mild: this.population.filter(p => p.infectionsStage === InfectionStage.mild).length,
-                severe: this.population.filter(p => p.infectionsStage === InfectionStage.severe).length,
-                death: this.population.filter(p => p.infectionsStage === InfectionStage.death).length,
-                healed: this.population.filter(p => p.infectionsStage === InfectionStage.healed).length,
+                total       : this.population.length,
+                incubation,
+                mild,
+                severe,
+                death,
+                healed,
                 hospitalBeds: this.hospitalBeds
             })
         }
@@ -46,8 +68,16 @@ export class Simulation implements ISimulation{
     }
 
     private progressInfection() {
-        this.population.forEach(person => {
-            if (!person.infected) return;
+      
+        let occupiedBeds = 0;
+        for (let i = 0, list = this.population, len = list.length; i < len; i++) {
+            if (list[i].hospitalized) {
+                occupiedBeds++;
+            }
+        }
+        for (let i = 0, list = this.population, len = list.length; i < len; i++) {
+            let person = list[i];
+            if (!person.infected) continue;
             person.nextDay()
 
             switch (person.infectionsStage) {
@@ -66,8 +96,10 @@ export class Simulation implements ISimulation{
 
                     if (happenedToday(severeChance)) {
                         person.setStage(InfectionStage.severe)
-                        const occupiedBeds = this.population.filter(person => person.hospitalized).length
-                        person.hospitalized = occupiedBeds < this.hospitalBeds
+                        if (occupiedBeds < this.hospitalBeds) {
+                          person.hospitalized = occupiedBeds < this.hospitalBeds
+                          occupiedBeds++;
+                        }
                         person.nextStage = this.virus.getNextStage(person)
                     } else if (happenedToday(recoverChance)) {
                         person.heal()
@@ -90,16 +122,16 @@ export class Simulation implements ISimulation{
 
                 default: break;
             }
-        })
+        }
     }
 
     private progressSpread() {
-        this.population
-            .filter(p => p.infected)
-            .forEach(() => {
-                getRandomSubArray(this.population, this.averageSocialContacts)
-                    .forEach(p => happenedToday(this.virus.transmissionChance()) && p.infect())
-            })
+        for (let i = 0, list = this.population, len = list.length; i < len; i++) {
+            let person = list[i];
+            if (!person.infected) continue;
+            getRandomSubArray(this.population, this.averageSocialContacts)
+                .forEach(p => happenedToday(this.virus.transmissionChance()) && p.infect())
+        }
     }
 }
 
