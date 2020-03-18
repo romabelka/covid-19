@@ -9,12 +9,13 @@ interface PopulationProps {
 export const PopulationControl: React.FC<PopulationProps> = ({ population, handlePopulationChange }) => {
     const sliders = Array(10).fill(0)
         .map((_, group) => (
-            <div key={group} style={{ width: '50%'}}>
-                <h4>{group*10}-{group*10 + 9}</h4>
+            <div key={group}>
+                <h4>age group: {group*10}-{group*10 + 9}</h4>
                 <Slider
                     defaultValue={population[group]}
                     min={0}
                     max={1e4}
+                    marks={{0: 0, 10000: 10000}}
                     onAfterChange={(amount) => handlePopulationChange(group, amount as number)}
                 />
             </div>

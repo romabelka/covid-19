@@ -27,7 +27,7 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
 
     const simulation = new Simulation(population, new Covid19(), simulationData.hospitalBeds, 5)
 
-    const data = simulation.run(500)
+    const data = simulation.run(200)
 
     const totals = {
         general: getTotals(simulation.population),
@@ -39,8 +39,10 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
     return (
         <div>
             <h1>Naive Infection Distribution</h1>
+            <div style={{ display: 'flex' }}>
             <DataChart data={data} totals={totals}/>
             <InfectionControls simulationData={simulationData} setSimulationData={setSimulationData} />
+            </div>
         </div>
     )
 }
