@@ -3,6 +3,7 @@ import {PopulationControl} from '../controls/population'
 import {HospitalsControl} from '../controls/hospitals'
 import {Divider} from 'antd'
 import {DaysControl} from '../controls/days'
+import {Update} from '../controls/update'
 import {SocialContactsControl} from '../controls/social-contacts'
 
 export interface ISimulationData {
@@ -15,9 +16,13 @@ export interface ISimulationData {
 export interface InfectionControlsProps {
     simulationData: ISimulationData
     setSimulationData: (data: ISimulationData) => void
+    dirty: boolean
+    update: () => void
 }
 
-export const InfectionControls: React.FC<InfectionControlsProps> = ({ simulationData, setSimulationData }) => {
+export const InfectionControls: React.FC<InfectionControlsProps> = ({
+    simulationData, setSimulationData, dirty, update
+}) => {
     const handlePopulationChange = (group: number, amount: number) => {
         const infectedPopulation = [...simulationData.infectedPopulation]
         infectedPopulation[group] = amount
@@ -44,7 +49,10 @@ export const InfectionControls: React.FC<InfectionControlsProps> = ({ simulation
 
     return (
         <div style={{width: '100%', padding: '0 30px'}}>
-            <h2>Controls</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <h2>Controls</h2>
+                <Update dirty={dirty} update={update} />
+            </div>
             <HospitalsControl hospitalBeds={simulationData.hospitalBeds} handleHospitalsChange={handleHospitalsChange}/>
             <Divider />
             <DaysControl handleDaysChange={handleDaysChange} days={simulationData.days}/>
