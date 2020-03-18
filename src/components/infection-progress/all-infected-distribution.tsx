@@ -1,5 +1,5 @@
-import React, {useState} from 'react'
-import {InfectionStage, IPerson} from '../../types'
+import React, {useState, useRef, useLayoutEffect} from 'react'
+import {InfectionStage, IPerson, ISimulationHistory} from '../../types'
 import {DataChart, ITotals} from './data-chart'
 import {InfectionControls, ISimulationData} from './infection-progress-controls'
 import {Person} from '../../simulation/person'
@@ -23,31 +23,43 @@ const defaultSimulation: ISimulationData = {
 
 export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = ({ }) => {
     const [simulationData, setSimulationData] = useState<ISimulationData>(defaultSimulation)
+    const lastRunSimulationData = useRef<ISimulationData>(simulationData)
 
-    const population = simulationData.infectedPopulation
+    const [data, setData] = useState<ISimulationHistory[] | null>(null)
+    const [totals, setTotals] = useState<any>(null)
+
+    const update = () => {
+        const population = simulationData.infectedPopulation
         .flatMap((amount, group) =>
             Array(amount).fill(group * 10 + 5).map(age => new Person({ age }))
         )
 
-    getRandomSubArray(population, 100).forEach(person => person.infect())
+        getRandomSubArray(population, 100).forEach(person => person.infect())
 
-    const simulation = new Simulation(population, new Covid19(), simulationData.hospitalBeds, simulationData.socialContacts)
+        const simulation = new Simulation(population, new Covid19(), simulationData.hospitalBeds, simulationData.socialContacts)
 
-    const data = simulation.run(simulationData.days)
-
-    const totals = {
-        general: getTotals(simulation.population),
-        byAge: Array(10).fill(0).map((_, age) =>
-            getTotals(simulation.population.filter(p => p.age >= age * 10 && p.age < (age + 1) * 10))
-        )
+        const nextData = simulation.run(simulationData.days)
+        const totals = {
+            general: getTotals(simulation.population),
+            byAge: Array(10).fill(0).map((_, age) =>
+                getTotals(simulation.population.filter(p => p.age >= age * 10 && p.age < (age + 1) * 10))
+            )
+        }
+        setData(nextData)
+        setTotals(totals)
+        lastRunSimulationData.current = simulationData
     }
+
+    useLayoutEffect(() => update(), [])
+
+    const dirty = simulationData !== lastRunSimulationData.current
 
     return (
         <div>
             <h1>Naive Infection Distribution</h1>
             <div style={{ display: 'flex' }}>
-            <DataChart data={data} totals={totals}/>
-            <InfectionControls simulationData={simulationData} setSimulationData={setSimulationData} />
+            {data && <DataChart data={data} totals={totals}/>}
+            <InfectionControls update={update} dirty={dirty} simulationData={simulationData} setSimulationData={setSimulationData} />
             </div>
         </div>
     )
