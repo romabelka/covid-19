@@ -11,8 +11,12 @@ export interface AllInfectedDistributionProps {
 }
 
 const defaultSimulation: ISimulationData = {
-    infectedPopulation: [1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e3, 1e3, 1e3, 1e3],
-    hospitalBeds: 10,
+    //Ukraine age population: https://ukrstat.org/uk/druk/publicat/kat_u/2019/zb/07/zb_rpnu2019.pdf page 26
+    //'1960529, 2 372 969, 2 147 481, 1 834 598, 2 200 523, 2 886 099, 3 563 993, 3 358 614, 3 069 863, 2 907 414, 2 743 877 , 3 110 494, 2 792 559, 2 389 627, 1 474 886, 1 382 695, 1 787 343'
+    //the last to numbers age given as 80+, my split is 1000000 and 787343
+    // [4333498, 3982079, 5086622, 6922607, 5977277, 5854371, 5182186, 2857581, 1000000, 787343]
+    infectedPopulation: [4333, 3982, 5086, 6922, 5977, 5854, 5182, 2857, 1000, 787],
+    hospitalBeds: 1000,
     days: 200,
     socialContacts: 5
 }
