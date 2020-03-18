@@ -61,6 +61,15 @@ export interface ISimulation {
     hospitalBeds: number
 
     nextDay: () => void
+    run: (days: number) => ISimulationHistory[]
 }
 
-
+export interface ISimulationHistory {
+    total: number
+    incubation: number
+    mild: number
+    severe: number
+    death: number
+    healed: number
+    hospitalBeds: number
+}

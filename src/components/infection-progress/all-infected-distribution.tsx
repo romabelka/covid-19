@@ -11,8 +11,8 @@ export interface AllInfectedDistributionProps {
 }
 
 const defaultSimulation: ISimulationData = {
-    infectedPopulation: [1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4],
-    hospitalBeds: 1e4
+    infectedPopulation: [1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e3, 1e3, 1e3, 1e3],
+    hospitalBeds: 10
 }
 
 export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = ({ }) => {
@@ -25,22 +25,9 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
 
     getRandomSubArray(population, 100).forEach(person => person.infect())
 
-    const simulation = new Simulation(population, new Covid19(), simulationData.hospitalBeds, 10)
+    const simulation = new Simulation(population, new Covid19(), simulationData.hospitalBeds, 5)
 
-    const data = []
-
-    for (let day = 0; day < 70; day++) {
-        simulation.nextDay();
-        data.push({
-            total: population.length,
-            incubation: population.filter(p => p.infectionsStage === InfectionStage.incubation).length,
-            mild: population.filter(p => p.infectionsStage === InfectionStage.mild).length,
-            severe: population.filter(p => p.infectionsStage === InfectionStage.severe).length,
-            death: population.filter(p => p.infectionsStage === InfectionStage.death).length,
-            healed: population.filter(p => p.infectionsStage === InfectionStage.healed).length,
-            hospitalBeds: simulation.hospitalBeds
-        })
-    }
+    const data = simulation.run(500)
 
     const totals = {
         general: getTotals(simulation.population),

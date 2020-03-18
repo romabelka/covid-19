@@ -1,4 +1,4 @@
-import {InfectionStage, IPerson, ISimulation, IVirus} from '../types'
+import {InfectionStage, IPerson, ISimulation, ISimulationHistory, IVirus} from '../types'
 import {Covid19} from './virus'
 import {getRandomSubArray, happenedToday} from './utils'
 
@@ -25,6 +25,24 @@ export class Simulation implements ISimulation{
 
         this.progressInfection()
         this.progressSpread()
+    }
+
+    run = (days: number): ISimulationHistory[] => {
+        const history = []
+        for (let day = 0; day < days; day++) {
+            this.nextDay();
+            history.push({
+                total: this.population.length,
+                incubation: this.population.filter(p => p.infectionsStage === InfectionStage.incubation).length,
+                mild: this.population.filter(p => p.infectionsStage === InfectionStage.mild).length,
+                severe: this.population.filter(p => p.infectionsStage === InfectionStage.severe).length,
+                death: this.population.filter(p => p.infectionsStage === InfectionStage.death).length,
+                healed: this.population.filter(p => p.infectionsStage === InfectionStage.healed).length,
+                hospitalBeds: this.hospitalBeds
+            })
+        }
+
+        return history
     }
 
     private progressInfection() {
