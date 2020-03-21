@@ -74,7 +74,7 @@ export class Covid19 implements IVirus {
 }
 
 const virusCharacteristics: IVirusCharacteristics = {
-    transmissionChance: .01,
+    transmissionChance: .005,
 
     averageIncubationDays: 10,
     averageMildToHealDays: 14,
