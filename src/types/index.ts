@@ -4,6 +4,7 @@ export interface IPerson {
     immune: boolean
     infected: boolean
     hospitalized: boolean
+    severeNotHospitalized: boolean
     infectionDay: number
     currentStageDay: number
     infectionsStage: InfectionStage

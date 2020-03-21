@@ -18,6 +18,7 @@ export interface ITotals {
     infected: number,
     onlyMildSymptoms: number,
     hadSevereSymptoms: number
+    severeNotHospitalized: number
 }
 
 export interface DataChartProps {
@@ -130,7 +131,9 @@ function getLegend(data: ITotals) {
             </h3>
             <h3 style={{ color: 'red'}}>
                 Severe symptoms: {data.hadSevereSymptoms}
-                ({(100*data.hadSevereSymptoms/data.infected).toFixed(1)}%)
+                ({(100*data.hadSevereSymptoms/data.infected).toFixed(1)}%);
+                Not hospitalized: {data.severeNotHospitalized},
+                ({(100*data.severeNotHospitalized/data.hadSevereSymptoms).toFixed(1)}%);
             </h3>
             <h3 style={{ color: 'yellow'}}>Incubation</h3>
             <Divider />

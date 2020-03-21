@@ -16,6 +16,7 @@ const defaultSimulation: ISimulationData = {
     //the last to numbers age given as 80+, my split is 1000000 and 787343
     // [4333498, 3982079, 5086622, 6922607, 5977277, 5854371, 5182186, 2857581, 1000000, 787343]
     infectedPopulation: [4333, 3982, 5086, 6922, 5977, 5854, 5182, 2857, 1000, 787],
+/*
     hospitalBeds: 10,
     days: 200,
     socialContacts: {
@@ -23,6 +24,15 @@ const defaultSimulation: ISimulationData = {
         avContactsGeneral: 10,
         quarantineAge: 60,
         quarantineTime: 100
+    }
+*/
+    hospitalBeds: 1000,
+    days: 200,
+    socialContacts: {
+        avContactsQuarantine: 1,
+        avContactsGeneral: 7,
+        quarantineAge: 0,
+        quarantineTime: 0
     }
 }
 
@@ -84,7 +94,7 @@ function getTotals(population: IPerson[]): ITotals {
         ).length,
         hadSevereSymptoms: totalInfected.filter(p =>
             p.history.has(InfectionStage.severe) || p.infectionsStage === InfectionStage.severe
-        ).length
-
+        ).length,
+        severeNotHospitalized: totalInfected.filter(p => p.severeNotHospitalized).length
     }
 }

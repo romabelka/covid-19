@@ -1,18 +1,24 @@
 import {InfectionStage, IPerson, ISimulation, ISimulationHistory, ISocialContacts, IVirus} from '../types'
 import {Covid19} from './virus'
 import {getRandomSubArray, happenedToday} from './utils'
+const defaultQuarantine: ISocialContacts = {
+    avContactsGeneral: 10,
+    avContactsQuarantine: 1,
+    quarantineTime: 60,
+    quarantineAge: 0
+}
 
 export class Simulation implements ISimulation{
     hospitalBeds = 0
     population: IPerson[]
     virus: IVirus
     day = 0
-    socialContacts: ISocialContacts
+    socialContacts: ISocialContacts = defaultQuarantine
 
     constructor(population: IPerson[] = [],
                 virus = new Covid19(),
                 hospitalBeds = 0,
-                socialContacts: ISocialContacts
+                socialContacts: ISocialContacts = defaultQuarantine
     ) {
         this.population = population
         this.virus = virus
@@ -79,14 +85,10 @@ export class Simulation implements ISimulation{
 
     private progressInfection() {
 
-        let occupiedBeds = 0;
-        for (let i = 0, list = this.population, len = list.length; i < len; i++) {
-            if (list[i].hospitalized) {
-                occupiedBeds++;
-            }
-        }
-        for (let i = 0, list = this.population, len = list.length; i < len; i++) {
-            let person = list[i];
+        let occupiedBeds = this.population.filter(p => p.hospitalized).length;
+
+        for (let i = 0; i < this.population.length; i++) {
+            let person = this.population[i];
             if (!person.infected) continue;
             person.nextDay()
 
@@ -106,9 +108,11 @@ export class Simulation implements ISimulation{
 
                     if (happenedToday(severeChance)) {
                         person.setStage(InfectionStage.severe)
-                        if (occupiedBeds < this.hospitalBeds) {
-                          person.hospitalized = occupiedBeds < this.hospitalBeds
+                        if (occupiedBeds <= this.hospitalBeds) {
+                          person.hospitalized = true
                           occupiedBeds++;
+                        } else {
+                            person.severeNotHospitalized = true
                         }
                         person.nextStage = this.virus.getNextStage(person)
                     } else if (happenedToday(recoverChance)) {
@@ -123,6 +127,7 @@ export class Simulation implements ISimulation{
 
                     if (happenedToday(deathChance)) {
                         person.setStage(InfectionStage.death)
+                        person.hospitalized = false
                     } else if (happenedToday(recoverChance)) {
                         person.heal()
                     }

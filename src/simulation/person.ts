@@ -18,6 +18,7 @@ export class Person implements IPerson {
     immune: boolean = false
     infected: boolean = false
     hospitalized: boolean = false
+    severeNotHospitalized: boolean = false
     infectionDay: number = 0
     currentStageDay: number = 0
     infectionsStage: InfectionStage = InfectionStage.healthy
