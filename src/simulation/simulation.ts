@@ -31,26 +31,36 @@ export class Simulation implements ISimulation{
         const history = []
         for (let day = 0; day < days; day++) {
             this.nextDay();
-            
+
             let incubation  = 0;
             let mild        = 0;
             let severe      = 0;
             let death       = 0;
             let healed      = 0;
-            
+
             let FAincubation = InfectionStage.incubation;
-            let FAmild       = InfectionStage.mild      ;
-            let FAsevere     = InfectionStage.severe    ;
-            let FAdeath      = InfectionStage.death     ;
-            let FAhealed     = InfectionStage.healed    ;
-            
+            let FAmild       = InfectionStage.mild;
+            let FAsevere     = InfectionStage.severe;
+            let FAdeath      = InfectionStage.death;
+            let FAhealed     = InfectionStage.healed;
+
             for (let i = 0, list = this.population, len = list.length; i < len; i++) {
                 switch (list[i].infectionsStage) {
-                    case FAincubation:incubation++;break;
-                    case FAmild      :mild      ++;break;
-                    case FAsevere    :severe    ++;break;
-                    case FAdeath     :death     ++;break;
-                    case FAhealed    :healed    ++;break;
+                    case FAincubation:
+                        incubation++;
+                        break;
+                    case FAmild:
+                        mild++;
+                        break;
+                    case FAsevere:
+                        severe++;
+                        break;
+                    case FAdeath:
+                        death++;
+                        break;
+                    case FAhealed:
+                        healed++;
+                        break;
                 }
             }
             history.push({
@@ -68,7 +78,7 @@ export class Simulation implements ISimulation{
     }
 
     private progressInfection() {
-      
+
         let occupiedBeds = 0;
         for (let i = 0, list = this.population, len = list.length; i < len; i++) {
             if (list[i].hospitalized) {
@@ -126,11 +136,14 @@ export class Simulation implements ISimulation{
     }
 
     private progressSpread() {
-        for (let i = 0, list = this.population, len = list.length; i < len; i++) {
-            let person = list[i];
-            if (!person.infected) continue;
+        for (let i = 0; i < this.population.length; i++) {
+            let person = this.population[i];
             getRandomSubArray(this.population, this.averageSocialContacts)
-                .forEach(p => happenedToday(this.virus.transmissionChance()) && p.infect())
+                .forEach(p =>
+                    p.infected
+                    && happenedToday(this.virus.transmissionChance())
+                    && person.infect()
+                )
         }
     }
 }
