@@ -5,12 +5,13 @@ import {Divider} from 'antd'
 import {DaysControl} from '../controls/days'
 import {Update} from '../controls/update'
 import {SocialContactsControl} from '../controls/social-contacts'
+import {ISocialContacts} from '../../types'
 
 export interface ISimulationData {
     infectedPopulation: number[]
     hospitalBeds: number
     days: number
-    socialContacts: number
+    socialContacts: ISocialContacts
 }
 
 export interface InfectionControlsProps {
@@ -42,7 +43,7 @@ export const InfectionControls: React.FC<InfectionControlsProps> = ({
         ...simulationData,
         days
     })
-    const handleContactsChange = (socialContacts: number) => setSimulationData({
+    const handleContactsChange = (socialContacts: ISocialContacts) => setSimulationData({
         ...simulationData,
         socialContacts
     })

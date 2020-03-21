@@ -16,9 +16,14 @@ const defaultSimulation: ISimulationData = {
     //the last to numbers age given as 80+, my split is 1000000 and 787343
     // [4333498, 3982079, 5086622, 6922607, 5977277, 5854371, 5182186, 2857581, 1000000, 787343]
     infectedPopulation: [4333, 3982, 5086, 6922, 5977, 5854, 5182, 2857, 1000, 787],
-    hospitalBeds: 1000,
+    hospitalBeds: 10,
     days: 200,
-    socialContacts: 5
+    socialContacts: {
+        avContactsQuarantine: 1,
+        avContactsGeneral: 10,
+        quarantineAge: 60,
+        quarantineTime: 100
+    }
 }
 
 export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = ({ }) => {

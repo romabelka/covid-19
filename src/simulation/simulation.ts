@@ -1,4 +1,4 @@
-import {InfectionStage, IPerson, ISimulation, ISimulationHistory, IVirus} from '../types'
+import {InfectionStage, IPerson, ISimulation, ISimulationHistory, ISocialContacts, IVirus} from '../types'
 import {Covid19} from './virus'
 import {getRandomSubArray, happenedToday} from './utils'
 
@@ -7,17 +7,17 @@ export class Simulation implements ISimulation{
     population: IPerson[]
     virus: IVirus
     day = 0
-    averageSocialContacts = 1
+    socialContacts: ISocialContacts
 
     constructor(population: IPerson[] = [],
                 virus = new Covid19(),
                 hospitalBeds = 0,
-                socialContacts = 1
+                socialContacts: ISocialContacts
     ) {
         this.population = population
         this.virus = virus
         this.hospitalBeds = hospitalBeds
-        this.averageSocialContacts = socialContacts
+        this.socialContacts = socialContacts
     }
 
     nextDay = () => {
@@ -64,7 +64,7 @@ export class Simulation implements ISimulation{
                 }
             }
             history.push({
-                total       : this.population.length,
+                total: this.population.length,
                 incubation,
                 mild,
                 severe,
@@ -136,9 +136,14 @@ export class Simulation implements ISimulation{
     }
 
     private progressSpread() {
+        const {quarantineAge, avContactsGeneral, avContactsQuarantine, quarantineTime} = this.socialContacts
         for (let i = 0; i < this.population.length; i++) {
             let person = this.population[i];
-            getRandomSubArray(this.population, this.averageSocialContacts)
+            const contacts = this.day < quarantineTime && person.age >= quarantineAge
+                ? avContactsQuarantine
+                : avContactsGeneral
+
+            getRandomSubArray(this.population, contacts)
                 .forEach(p =>
                     p.infected
                     && happenedToday(this.virus.transmissionChance())

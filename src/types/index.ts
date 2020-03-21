@@ -73,3 +73,10 @@ export interface ISimulationHistory {
     healed: number
     hospitalBeds: number
 }
+
+export interface ISocialContacts {
+    quarantineAge: number
+    avContactsGeneral: number,
+    avContactsQuarantine: number
+    quarantineTime: number
+}
