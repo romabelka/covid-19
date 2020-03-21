@@ -1,6 +1,7 @@
 import {InfectionStage, IPerson, ISimulation, ISimulationHistory, ISocialContacts, IVirus} from '../types'
 import {Covid19} from './virus'
 import {getRandomSubArray, happenedToday} from './utils'
+
 const defaultQuarantine: ISocialContacts = {
     avContactsGeneral: 10,
     avContactsQuarantine: 1,
@@ -142,13 +143,15 @@ export class Simulation implements ISimulation{
 
     private progressSpread() {
         const {quarantineAge, avContactsGeneral, avContactsQuarantine, quarantineTime} = this.socialContacts
+        const live = this.population.filter(p => p.infectionsStage !== InfectionStage.death)
+
         for (let i = 0; i < this.population.length; i++) {
             let person = this.population[i];
             const contacts = this.day < quarantineTime && person.age >= quarantineAge
                 ? avContactsQuarantine
                 : avContactsGeneral
 
-            getRandomSubArray(this.population, contacts)
+            getRandomSubArray(live, contacts)
                 .forEach(p =>
                     p.infected
                     && happenedToday(this.virus.transmissionChance())

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useLayoutEffect, useEffect} from 'react'
+import React, {useState, useRef, useLayoutEffect} from 'react'
 import {InfectionStage, IPerson, ISimulationHistory} from '../../types'
 import {DataChart, ITotals} from './data-chart'
 import {InfectionControls, ISimulationData} from './infection-progress-controls'
@@ -28,7 +28,7 @@ const defaultSimulation: ISimulationData = {
     }
 }
 
-export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = ({ }) => {
+export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = () => {
     const [calculating, setCalculating] = useState<boolean>(true)
     const [simulationData, setSimulationData] = useState<ISimulationData>(defaultSimulation)
     const lastRunSimulationData = useRef<ISimulationData>(simulationData)
@@ -50,7 +50,8 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
 
             getRandomSubArray(population, 100).forEach(person => person.infect())
 
-            const simulation = new Simulation(population, new Covid19(), simulationData.hospitalBeds, simulationData.socialContacts)
+            const simulation = new Simulation(population, new Covid19(), simulationData.hospitalBeds, simulationData.socialContacts);
+            (window as any).simulation = simulation
 
             const nextData = simulation.run(simulationData.days)
             const totals = {
