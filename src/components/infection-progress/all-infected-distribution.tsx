@@ -51,7 +51,13 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
 
             getRandomSubArray(population, 1000).forEach(person => person.infect())
 
-            const simulation = new Simulation(population, new Covid19(), simulationData.hospitalBeds, simulationData.socialContacts);
+            const simulation = new Simulation(
+                population,
+                new Covid19(),
+                simulationData.hospitalBeds,
+                simulationData.socialContacts,
+                simulationData.travellers
+            );
             (window as any).simulation = simulation
 
             const nextData = simulation.run(simulationData.days)
