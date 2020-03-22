@@ -19,8 +19,8 @@ const defaultSimulation: ISimulationData = {
     infectedPopulation: [4333, 3982, 5086, 6922, 5977, 5854, 5182, 2857, 1000, 787],
     //infectedPopulation: [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000],
     hospitalBeds: 50,
-    travellers: 2,
-    days: 400,
+    travellers: 1,
+    days: 365,
     socialContacts: {
         avContactsQuarantine: 1,
         avContactsGeneral: 20,
