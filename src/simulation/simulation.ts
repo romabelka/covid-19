@@ -40,7 +40,7 @@ export class Simulation implements ISimulation{
     }
 
     incomingTravellers = () => {
-        if (this.day < this.socialContacts.quarantineTime) return;
+        if (this.day <= this.socialContacts.quarantineTime) return;
 
         const travellers = Array(this.travellersPerDay)
             .fill(35)

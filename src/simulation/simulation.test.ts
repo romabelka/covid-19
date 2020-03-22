@@ -545,6 +545,62 @@ describe('Infected Population', () => {
         });
     });
 
+    describe('Travellers', () => {
+        it('should add infected travellers ', () => {
+            const total = 100
+            const days = 10
+            const travellers = 5
+
+            const virus = new Covid19({
+                ...testVirusCharacteristics,
+                averageIncubationDays: 10000
+            })
+
+            const simulation = new Simulation(getPeople(total, virus, {}), virus, total, quarantine, travellers)
+
+            for (let i = 0; i < days; i++) {
+                simulation.nextDay()
+            }
+
+            const { population } = simulation
+
+            expect(population.every(p => p.infected)).toBe(true)
+
+            expect(population.length).toBe(total + days * travellers)
+        });
+
+        it('should add infected travellers after quarantine', () => {
+            const total = 100
+            const days = 10
+            const travellers = 5
+            const quarantineTime = 5
+
+            const virus = new Covid19({
+                ...testVirusCharacteristics,
+                averageIncubationDays: 10000
+            })
+
+            const simulation = new Simulation(
+                getPeople(total, virus, {}),
+                virus,
+                total,
+                {...quarantine, quarantineTime },
+                travellers
+            )
+
+            for (let i = 0; i < days; i++) {
+                simulation.nextDay()
+            }
+
+            const { population } = simulation
+
+            expect(population.every(p => p.infected)).toBe(true)
+
+            expect(population.length).toBe(total + (days - quarantineTime) * travellers)
+        });
+
+    });
+
     describe('Spread', () => {
 /*
         it('should spread exponentially in the beginning', () => {
