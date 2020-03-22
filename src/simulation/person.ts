@@ -20,6 +20,7 @@ export class Person implements IPerson {
     hospitalized: boolean = false
     severeNotHospitalized: boolean = false
     infectionDay: number = 0
+    infectionSpread: number = 0
     currentStageDay: number = 0
     infectionsStage: InfectionStage = InfectionStage.healthy
     nextStage: InfectionStage = InfectionStage.incubation

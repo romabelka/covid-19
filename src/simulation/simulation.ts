@@ -3,7 +3,7 @@ import {Covid19} from './virus'
 import {getRandomSubArray, happenedToday} from './utils'
 
 const defaultQuarantine: ISocialContacts = {
-    avContactsGeneral: 10,
+    avContactsGeneral: 20,
     avContactsQuarantine: 1,
     quarantineTime: 60,
     quarantineAge: 0
@@ -39,33 +39,27 @@ export class Simulation implements ISimulation{
         for (let day = 0; day < days; day++) {
             this.nextDay();
 
-            let incubation  = 0;
-            let mild        = 0;
-            let severe      = 0;
-            let death       = 0;
-            let healed      = 0;
+            let incubation = 0;
+            let mild = 0;
+            let severe = 0;
+            let death = 0;
+            let healed = 0;
 
-            let FAincubation = InfectionStage.incubation;
-            let FAmild       = InfectionStage.mild;
-            let FAsevere     = InfectionStage.severe;
-            let FAdeath      = InfectionStage.death;
-            let FAhealed     = InfectionStage.healed;
-
-            for (let i = 0, list = this.population, len = list.length; i < len; i++) {
-                switch (list[i].infectionsStage) {
-                    case FAincubation:
+            for (let i = 0; i < this.population.length; i++) {
+                switch (this.population[i].infectionsStage) {
+                    case InfectionStage.incubation:
                         incubation++;
                         break;
-                    case FAmild:
+                    case InfectionStage.mild:
                         mild++;
                         break;
-                    case FAsevere:
+                    case InfectionStage.severe:
                         severe++;
                         break;
-                    case FAdeath:
+                    case InfectionStage.death:
                         death++;
                         break;
-                    case FAhealed:
+                    case InfectionStage.healed:
                         healed++;
                         break;
                 }
@@ -152,11 +146,12 @@ export class Simulation implements ISimulation{
                 : avContactsGeneral
 
             getRandomSubArray(live, contacts)
-                .forEach(p =>
-                    p.infected
-                    && happenedToday(this.virus.transmissionChance())
-                    && person.infect()
-                )
+                .forEach(p => {
+                    if (!p.infected || !happenedToday(this.virus.transmissionChance())) return;
+
+                    p.infectionSpread++
+                    person.infect()
+                })
         }
     }
 }

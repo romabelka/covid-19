@@ -19,6 +19,7 @@ export interface ITotals {
     onlyMildSymptoms: number,
     hadSevereSymptoms: number
     severeNotHospitalized: number
+    R0: number
 }
 
 export interface DataChartProps {
@@ -27,9 +28,10 @@ export interface DataChartProps {
         byAge: ITotals[]
         general: ITotals
     }
+    quarantineTime: number
 }
 
-export const DataChart: React.FC<DataChartProps> = ({ data, totals }) => {
+export const DataChart: React.FC<DataChartProps> = ({ data, totals, quarantineTime }) => {
     const width = 1000
     const height = 500
     const itemWidth = Math.floor(width / data.length)
@@ -59,6 +61,7 @@ export const DataChart: React.FC<DataChartProps> = ({ data, totals }) => {
           <rect width={itemWidth} height={height * day.severe} x={i * itemWidth}
                 y = {(day.death + day.healthy + day.healed + day.incubation + day.mild) * height} fill="red"/>
           <rect width={itemWidth} height={2}  x={i * itemWidth} y={height - height * day.beds} fill="blue"/>
+          <rect width={2} height={height} x={width * quarantineTime / data.length} y={0} fill="black"/>
       </React.Fragment>
     ))
 
@@ -124,6 +127,7 @@ function getLegend(data: ITotals) {
                 Dead: {data.dead},
                 {(100*data.dead/data.infected).toFixed(1)}% Dead/All Cases,
                 {(100*data.dead/(data.healed + data.dead)).toFixed(1)}% Dead/Closed Cases,
+                R0: {data.R0.toFixed(2)}
             </h3>
             <h3 style={{ color: 'green' }}>Healed: {data.healed}</h3>
             <h3 style={{ color: 'grey'}}>

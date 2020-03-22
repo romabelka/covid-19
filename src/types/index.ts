@@ -6,6 +6,7 @@ export interface IPerson {
     hospitalized: boolean
     severeNotHospitalized: boolean
     infectionDay: number
+    infectionSpread: number
     currentStageDay: number
     infectionsStage: InfectionStage
     history: Map<InfectionStage, number>

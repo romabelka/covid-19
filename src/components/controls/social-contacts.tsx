@@ -37,16 +37,16 @@ export const SocialContactsControl: React.FC<SocialContactsControlProps> = ({ co
             <Slider
                 defaultValue={contacts.avContactsGeneral}
                 min={0}
-                max={20}
-                marks={{0: 0, 20: 20}}
+                max={40}
+                marks={{0: 0, 40: 40}}
                 onAfterChange={(contacts) => handleChange({ avContactsGeneral: contacts as number })}
             />
             <h4>Contacts Quarantined:</h4>
             <Slider
                 defaultValue={contacts.avContactsQuarantine}
                 min={0}
-                max={20}
-                marks={{0: 0, 20: 20}}
+                max={40}
+                marks={{0: 0, 40: 40}}
                 onAfterChange={(contacts) => handleChange({ avContactsQuarantine: contacts as number })}
             />
         </div>

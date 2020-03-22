@@ -19,12 +19,12 @@ const defaultSimulation: ISimulationData = {
     infectedPopulation: [4333, 3982, 5086, 6922, 5977, 5854, 5182, 2857, 1000, 787],
     //infectedPopulation: [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000],
     hospitalBeds: 150,
-    days: 700,
+    days: 400,
     socialContacts: {
         avContactsQuarantine: 1,
-        avContactsGeneral: 7,
-        quarantineAge: 60,
-        quarantineTime: 365
+        avContactsGeneral: 20,
+        quarantineAge: 50,
+        quarantineTime: 90
     }
 }
 
@@ -48,7 +48,7 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
                     Array(amount).fill(group * 10 + 5).map(age => new Person({ age }))
                 )
 
-            getRandomSubArray(population, 100).forEach(person => person.infect())
+            getRandomSubArray(population, 1000).forEach(person => person.infect())
 
             const simulation = new Simulation(population, new Covid19(), simulationData.hospitalBeds, simulationData.socialContacts);
             (window as any).simulation = simulation
@@ -77,7 +77,7 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
             <Loader active={calculating}/>
             <h1>Naive Infection Distribution</h1>
             <div style={{ display: 'flex' }}>
-            {data && totals && <DataChart data={data} totals={totals}/>}
+            {data && totals && <DataChart data={data} totals={totals} quarantineTime={simulationData.socialContacts.quarantineTime}/>}
             <InfectionControls update={update} dirty={dirty} simulationData={simulationData} setSimulationData={setSimulationData} />
             </div>
         </div>
@@ -99,6 +99,7 @@ function getTotals(population: IPerson[]): ITotals {
         hadSevereSymptoms: totalInfected.filter(p =>
             p.history.has(InfectionStage.severe) || p.infectionsStage === InfectionStage.severe
         ).length,
-        severeNotHospitalized: totalInfected.filter(p => p.severeNotHospitalized).length
+        severeNotHospitalized: totalInfected.filter(p => p.severeNotHospitalized).length,
+        R0: totalInfected.reduce((acc, p) => acc + p.infectionSpread, 0)/totalInfected.length
     }
 }
