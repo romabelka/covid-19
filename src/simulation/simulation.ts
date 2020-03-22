@@ -118,7 +118,7 @@ export class Simulation implements ISimulation{
 
                     if (happenedToday(severeChance)) {
                         person.setStage(InfectionStage.severe)
-                        if (occupiedBeds <= this.hospitalBeds) {
+                        if (occupiedBeds < this.hospitalBeds) {
                           person.hospitalized = true
                           occupiedBeds++;
                         } else {

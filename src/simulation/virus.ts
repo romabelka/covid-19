@@ -74,7 +74,7 @@ export class Covid19 implements IVirus {
 }
 
 const virusCharacteristics: IVirusCharacteristics = {
-    transmissionChance: .005,
+    transmissionChance: .006,
 
     averageIncubationDays: 10,
     averageMildToHealDays: 14,
@@ -82,11 +82,11 @@ const virusCharacteristics: IVirusCharacteristics = {
     averageSevereToHealDays: 21,
     averageSevereToDeathDays: 5,
 
-    ageSevereChance: [.01, .03, .03, .03, .06, .14, .32, .5, .65, .7],
+    ageSevereChance:  [.00, .01, .01, .01, .02, .06, .14, .27, .39, .60],
 
     ageDeathChance: {
-        hospitalized: [.1, .15, .15, .15, .20, .25, .33, .45, .65, .7],
-        home: [.1, .25, .25, .25, .35, .4, .5, .75, .9, .95],
+        hospitalized: [.20, .20, .20, .20, .20, .23, .26, .29, .38, .70],
+        home:         [.10, .30, .30, .30, .40, .45, .50, .60, .80, .99],
 //        home: [.3, .3, .3, .6, .6, .8, .9, .95, .95, 1]
     }
 }
