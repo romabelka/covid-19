@@ -61,7 +61,7 @@ export const DataChart: React.FC<DataChartProps> = ({ data, totals, quarantineTi
           <rect width={itemWidth} height={height * day.severe} x={i * itemWidth}
                 y = {(day.death + day.healthy + day.healed + day.incubation + day.mild) * height} fill="red"/>
           <rect width={itemWidth} height={2}  x={i * itemWidth} y={height - height * day.beds} fill="blue"/>
-          <rect width={1} height={height} x={width * quarantineTime / data.length} y={0} fill="black"/>
+          <rect width={1} height={height} x={quarantineTime * itemWidth} y={0} fill="black"/>
       </React.Fragment>
     ))
 
@@ -81,9 +81,9 @@ export const DataChart: React.FC<DataChartProps> = ({ data, totals, quarantineTi
 function statsByAge(data: ITotals[]) {
     const tableData = data.map((totals, ageGroup) => ({
         key: ageGroup,
-        total: totals.total,
-        infected: `${totals.infected} (${Math.round(100 * totals.infected / totals.total)}%)`,
-        dead: `${totals.dead} (${Math.round(100 * totals.dead / totals.total)}%)`,
+        total: 100 * totals.total,
+        infected: `${100 * totals.infected} (${Math.round(100 * totals.infected / totals.total)}%)`,
+        dead: `${100 * totals.dead} (${Math.round(100 * totals.dead / totals.total)}%)`,
         age: `${ageGroup*10}-${ageGroup*10 + 9}`,
         deathRateAll: `${(100 * totals.dead / totals.infected).toFixed(1)}%`,
         deathRateClosed: `${(100 * totals.dead / (totals.dead + totals.healed)).toFixed(1)}%`,
@@ -124,30 +124,30 @@ function getLegend(data: ITotals) {
     return (
         <>
             <h3 style={{ color: 'black' }}>
-                Dead: {data.dead},
+                Dead: {100 * data.dead},
                 {(100*data.dead/data.infected).toFixed(1)}% Dead/All Cases,
                 {(100*data.dead/(data.healed + data.dead)).toFixed(1)}% Dead/Closed Cases,
                 R0: {data.R0.toFixed(2)}
             </h3>
-            <h3 style={{ color: 'green' }}>Healed: {data.healed}</h3>
+            <h3 style={{ color: 'green' }}>Healed: {100 * data.healed}</h3>
             <h3 style={{ color: 'grey'}}>
-                Not Infected: {data.total - data.infected}
-                ({(100*(1 - data.infected/data.total)).toFixed(1)}%)
+                Infected: {100 * data.infected}
+                ({(100*(data.infected/data.total)).toFixed(1)}%)
             </h3>
             <h3 style={{ color: 'orange'}}>
-                Mild symptoms: {data.onlyMildSymptoms}
+                Mild symptoms: {100 * data.onlyMildSymptoms}
                 ({(100*data.onlyMildSymptoms/data.infected).toFixed(1)}%)
             </h3>
             <h3 style={{ color: 'red'}}>
-                Severe symptoms: {data.hadSevereSymptoms}
+                Severe symptoms: {100 * data.hadSevereSymptoms}
                 ({(100*data.hadSevereSymptoms/data.infected).toFixed(1)}%);
-                Not hospitalized: {data.severeNotHospitalized},
+                Not hospitalized: {100 * data.severeNotHospitalized},
                 ({(100*data.severeNotHospitalized/data.hadSevereSymptoms).toFixed(1)}%);
             </h3>
             <h3 style={{ color: 'yellow'}}>Incubation</h3>
             <Divider />
-            <h3>Total population: {data.total}</h3>
-            <h3>Total cases: {data.infected}</h3>
+            <h3>Total population: {100 * data.total}</h3>
+            <h3>Total cases: {100 * data.infected}</h3>
         </>
     )
 }

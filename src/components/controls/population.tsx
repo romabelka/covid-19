@@ -1,5 +1,6 @@
 import React from 'react'
 import {Slider} from 'antd'
+import {multiplier} from '../../simulation/constants'
 
 interface PopulationProps {
     handlePopulationChange: (group: number, amount: number) => void
@@ -12,11 +13,13 @@ export const PopulationControl: React.FC<PopulationProps> = ({ population, handl
             <div key={group}>
                 <h4>age group: {group*10}-{group*10 + 9}</h4>
                 <Slider
-                    defaultValue={population[group]}
+                    defaultValue={population[group] * multiplier}
                     min={0}
-                    max={1e4}
-                    marks={{0: 0, 10000: 10000}}
-                    onAfterChange={(amount) => handlePopulationChange(group, amount as number)}
+                    max={10000 * multiplier}
+                    marks={{0: 0, [10000 * multiplier]: 10000 * multiplier}}
+                    step={multiplier}
+                    onAfterChange={(amount) => handlePopulationChange(group, Math.round(amount as number / multiplier))}
+                    tooltipVisible
                 />
             </div>
         ))

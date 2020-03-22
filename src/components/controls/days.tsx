@@ -16,6 +16,7 @@ export const DaysControl: React.FC<DaysControlProps> = ({ days, handleDaysChange
                 max={1e3}
                 marks={{0: 0, 1000: 1000}}
                 onAfterChange={(amount) => handleDaysChange(amount as number)}
+                tooltipVisible
             />
         </div>
     )

@@ -1,5 +1,6 @@
 import React from 'react'
 import {Slider} from 'antd'
+import {multiplier} from '../../simulation/constants'
 
 interface TravellersControlProps {
     handleTravellersChange: (amount: number) => void
@@ -12,11 +13,13 @@ export const TravellersControl: React.FC<TravellersControlProps> = ({ travellers
             <h3>Infected Travellers per day:</h3>
             <p>* after quarantine ends</p>
             <Slider
-                defaultValue={travellers}
+                defaultValue={travellers * multiplier}
                 min={0}
-                max={10}
-                marks={{0: 0, 10: 10}}
-                onAfterChange={(amount) => handleTravellersChange(amount as number)}
+                max={10 * multiplier}
+                step={multiplier}
+                marks={{0: 0, [10 * multiplier]: 10 * multiplier}}
+                onAfterChange={(amount) => handleTravellersChange(Math.round(amount as number / multiplier))}
+                tooltipVisible
             />
         </div>
     )

@@ -18,7 +18,7 @@ const defaultSimulation: ISimulationData = {
     // [4333498, 3982079, 5086622, 6922607, 5977277, 5854371, 5182186, 2857581, 1000000, 787343]
     infectedPopulation: [4333, 3982, 5086, 6922, 5977, 5854, 5182, 2857, 1000, 787],
     //infectedPopulation: [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000],
-    hospitalBeds: 150,
+    hospitalBeds: 50,
     travellers: 2,
     days: 400,
     socialContacts: {
@@ -49,7 +49,7 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
                     Array(amount).fill(group * 10 + 5).map(age => new Person({ age }))
                 )
 
-            getRandomSubArray(population, 1000).forEach(person => person.infect())
+            getRandomSubArray(population, 100).forEach(person => person.infect())
 
             const simulation = new Simulation(
                 population,

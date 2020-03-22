@@ -1,6 +1,7 @@
 import React from 'react'
 import {Slider} from 'antd'
 import {ISocialContacts} from '../../types'
+import {multiplier} from '../../simulation/constants'
 
 interface SocialContactsControlProps {
     handleContactsChange: (amount: ISocialContacts) => void
@@ -14,6 +15,8 @@ export const SocialContactsControl: React.FC<SocialContactsControlProps> = ({ co
             ...data
         })
     }
+
+    const fraction = multiplier / 10
     return (
         <div>
             <h2>Quarantine:</h2>
@@ -24,6 +27,7 @@ export const SocialContactsControl: React.FC<SocialContactsControlProps> = ({ co
                 max={1000}
                 marks={{0: 0, 1000: 1000}}
                 onAfterChange={(days) => handleChange({ quarantineTime: days as number })}
+                tooltipVisible
             />
             <h4>Quarantine age:</h4>
             <Slider
@@ -32,22 +36,27 @@ export const SocialContactsControl: React.FC<SocialContactsControlProps> = ({ co
                 max={100}
                 marks={{0: 0, 100: 100}}
                 onAfterChange={(age) => handleChange({ quarantineAge: age as number })}
+                tooltipVisible
             />
             <h4>Average Contacts:</h4>
             <Slider
-                defaultValue={contacts.avContactsGeneral}
+                defaultValue={contacts.avContactsGeneral * fraction}
                 min={0}
-                max={40}
-                marks={{0: 0, 40: 40}}
-                onAfterChange={(contacts) => handleChange({ avContactsGeneral: contacts as number })}
+                max={40 * fraction}
+                marks={{0: 0, [40 * fraction]: 40 * fraction}}
+                step={fraction}
+                onAfterChange={(contacts) => handleChange({ avContactsGeneral: Math.round(contacts as number / fraction)})}
+                tooltipVisible
             />
             <h4>Contacts Quarantined:</h4>
             <Slider
-                defaultValue={contacts.avContactsQuarantine}
+                defaultValue={contacts.avContactsQuarantine * fraction}
                 min={0}
-                max={40}
-                marks={{0: 0, 40: 40}}
-                onAfterChange={(contacts) => handleChange({ avContactsQuarantine: contacts as number })}
+                max={40 * fraction}
+                marks={{0: 0, [40 * fraction]: 40 * fraction}}
+                step={fraction}
+                onAfterChange={(contacts) => handleChange({ avContactsQuarantine: Math.round(contacts as number / fraction) })}
+                tooltipVisible
             />
         </div>
     )
