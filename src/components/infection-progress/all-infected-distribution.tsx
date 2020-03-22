@@ -19,6 +19,7 @@ const defaultSimulation: ISimulationData = {
     infectedPopulation: [4333, 3982, 5086, 6922, 5977, 5854, 5182, 2857, 1000, 787],
     //infectedPopulation: [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000],
     hospitalBeds: 150,
+    travellers: 2,
     days: 400,
     socialContacts: {
         avContactsQuarantine: 1,
@@ -70,15 +71,13 @@ export const AllInfectedDistribution: React.FC<AllInfectedDistributionProps> = (
 
     useLayoutEffect(recalculate, [calculating])
 
-    const dirty = simulationData !== lastRunSimulationData.current
-
     return (
         <div>
             <Loader active={calculating}/>
             <h1>Naive Infection Distribution</h1>
             <div style={{ display: 'flex' }}>
             {data && totals && <DataChart data={data} totals={totals} quarantineTime={simulationData.socialContacts.quarantineTime}/>}
-            <InfectionControls update={update} dirty={dirty} simulationData={simulationData} setSimulationData={setSimulationData} />
+            <InfectionControls update={update} simulationData={simulationData} setSimulationData={setSimulationData} />
             </div>
         </div>
     )

@@ -1,6 +1,7 @@
 import {InfectionStage, IPerson, ISimulation, ISimulationHistory, ISocialContacts, IVirus} from '../types'
 import {Covid19} from './virus'
 import {getRandomSubArray, happenedToday} from './utils'
+import {Person} from './person'
 
 const defaultQuarantine: ISocialContacts = {
     avContactsGeneral: 20,
@@ -15,24 +16,38 @@ export class Simulation implements ISimulation{
     virus: IVirus
     day = 0
     socialContacts: ISocialContacts = defaultQuarantine
+    private travellersPerDay: number
 
     constructor(population: IPerson[] = [],
                 virus = new Covid19(),
                 hospitalBeds = 0,
-                socialContacts: ISocialContacts = defaultQuarantine
+                socialContacts: ISocialContacts = defaultQuarantine,
+                travellers = 0,
     ) {
         this.population = population
         this.virus = virus
         this.hospitalBeds = hospitalBeds
         this.socialContacts = socialContacts
+        this.travellersPerDay = travellers
     }
 
     nextDay = () => {
         this.day++
 
+        this.incomingTravellers()
         this.progressInfection()
         this.progressSpread()
     }
+
+    incomingTravellers = () => {
+        if (this.day < this.socialContacts.quarantineTime) return;
+
+        const travellers = Array(this.travellersPerDay)
+            .fill(35)
+            .map(age => new Person({ age, infected: true }))
+        this.population.push(...travellers)
+    }
+
 
     run = (days: number): ISimulationHistory[] => {
         const history = []
